@@ -56,7 +56,8 @@ use mykeyspace;
 
 Create Table
 ------------
-```  create table customer
+```  
+create table customer
 (
   id         UUID primary key,
   first_name varchar,
@@ -72,11 +73,19 @@ Drop Table
 
 Query Table
 -------------
-``` select * from customer; ```
+``` 
+select * from customer; 
 
+SELECT * FROM customer WHERE id=159281cc-5494-4c71-ac56-f40641b504ce;
 
+```
 
-
+Query Table other 
+-------------
+```
+create index idx_dept on custmoner(date_time);
+select * from customer where date_time = '2020-08-23 19:37:47.592000+0000';
+```
 
 Thanks!
 
