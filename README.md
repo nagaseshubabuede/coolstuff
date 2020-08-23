@@ -84,6 +84,7 @@ Query Table other
 -------------
 ```
 create index idx_dept on custmoner(date_time);
+
 select * from customer where date_time = '2020-08-23 19:37:47.592000+0000';
 ```
 
