@@ -1,16 +1,19 @@
 # coolstuff
 
-1. Get SpringBoot Project
-=========================
+```
+Get Spring Boot
+```
 
 The starter project comes with https://start.spring.io/ (Spring Initializer)
 
 
-2. Installing Cassandra on Mac OS X
-===================================
+```
+Install Cassandra
+```
+
 
 Caution!
-----------------
+---------
 Version Number might change!! The versions of all softwares mentioned here, including Cassandra will change as newer versions are launched. 
 
 Install Homebrew 
