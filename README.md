@@ -62,12 +62,20 @@ Create Table
   first_name varchar,
   last_name  varchar,
   date_time  timestamp
-); ```
+); 
+```
 
 Drop Table
 -----------
 
 ``` drop table customer;```
+
+Query Table
+-------------
+``` select * from customer; ```
+
+
+
 
 
 Thanks!
