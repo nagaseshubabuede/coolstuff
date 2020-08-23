@@ -1,15 +1,16 @@
 # coolstuff
 
-```
-1. Get Spring Boot
-```
-
-The starter project comes with https://start.spring.io/ (Spring Initializer)
-
+Get Spring Boot Project Using Spring Intializer 
+===============================================
+Spring Initializer is the coolest way to develop spring project on fly by simply using below URI :
 
 ```
-2. Install Cassandra
+https://start.spring.io/
 ```
+
+
+Installing Cassandra on Mac OS X
+================================
 
 
 Caution!
