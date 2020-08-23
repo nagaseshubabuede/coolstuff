@@ -13,10 +13,6 @@ Installing Cassandra on Mac OS X
 ================================
 
 
-Caution!
----------
-Version Number might change!! The versions of all softwares mentioned here, including Cassandra will change as newer versions are launched. 
-
 Install Homebrew 
 ----------------
 Homebrew is a great little package manager for OS X. If you haven't already, installing it is pretty easy:
@@ -41,10 +37,37 @@ pip install cassandra-driver
 ```
 Install Cassandra
 -----------------
-This installs Apache Cassandra:
+```brew install cassandra```
+
+Cassandra version
+-----------------
+```cassandra -v```
+
+start cassandra
+---------------
+```cassandra```
+
+Create Keyspace
+----------------
+``` 
+create keyspace mykeyspace with replication = {'class':'SimpleStrategy','replication_factor' : 2}; 
+use mykeyspace;
 ```
-brew install cassandra
-```
+
+Create Table
+------------
+```  create table customer
+(
+  id         UUID primary key,
+  first_name varchar,
+  last_name  varchar,
+  date_time  timestamp
+); ```
+
+Drop Table
+-----------
+
+``` drop table customer;```
 
 
 Thanks!
