@@ -33,6 +33,7 @@ Install cql
 To use cqlsh, the Cassandra query language shell, you need to install cql:
 ```
 pip install cql
+
 pip install cassandra-driver
 ```
 Install Cassandra
