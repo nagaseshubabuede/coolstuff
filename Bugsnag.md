@@ -1,4 +1,7 @@
 
+![GitHub Logo](/images/bugsnag.png)
+
+
 Bugsnag Installation
 ====================
 
