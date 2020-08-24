@@ -2,9 +2,9 @@
 Bugsnag Installation
 ====================
 
-```diff
-Add Bugsnag as a dependency in your  - pom.xml:
-```
+
+Add Bugsnag as a dependency in your  `pom.xml`:
+
 
 ```
 <dependency>
@@ -48,17 +48,10 @@ Alternatively, you can configure a `Bugsnag` Bean via XML:
 Test your integration
 To verify that your integration is working, call `Bugsnag.notify` in your application:
 ```
+@Autowired
+Bugsnag bugsnag;
+
 bugsnag.notify(new RuntimeException("Test error"));
 ```
 An error should appear in your dashboard after you click the continue button below.
 
-Next steps
-After completing the installation instructions, take a look at our documentation for additional configuration options. Find out how you can track your application's stability, add custom metadata, leave your own breadcrumbs, and more. If you need any help, contact us.
-
-```diff
-- text in red
-+ text in green
-! text in orange
-# text in gray
-@@ text in purple (and bold)@@
-```
