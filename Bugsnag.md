@@ -26,7 +26,7 @@ The simplest way to start capturing exceptions is to create a new class which ex
 public class BugsnagConfig {
     @Bean
     public Bugsnag bugsnag() {
-        return new Bugsnag("xxxxxxxxxxxxxxxxxxxxxxx");
+        return new Bugsnag("```-xxxxxxxxxxxxxxxxxxxxxxx```");
     }
 }
 ```
