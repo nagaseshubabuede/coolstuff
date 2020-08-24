@@ -7,4 +7,8 @@ Get your hands dirty
 Page | Covers
 --------------------------------------- | ----------------------------------------------------------------------------------------------------------
 Spring Boot with Cassandra.md           | This file convers Spring Boot Project Setup, Cassandra Installation, Spring Boot and Cassandra Integration
-Drools.md                               | Request Payload Validations
+Drools.md                               | Tells how to integrate Drools with Spring Boot Project
+Bugsnag.md                              | Tells how to integrate Bugsnag with Spring Boot Project 
+
+
+newman run https://web.postman.co/workspaces/21fa72d5-be63-4066-87ac-d60800d9d20b/collections
