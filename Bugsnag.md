@@ -1,5 +1,5 @@
 
-![GitHub Logo](/images/bugsnag.png)
+![GitHub Logo](/images/bugsnag/bugsnag.png)
 
 
 Bugsnag Installation
@@ -58,3 +58,10 @@ bugsnag.notify(new RuntimeException("Test error"));
 ```
 
 An error should appear in your dashboard after testing this stuff
+
+
+My Sample Errors on Bugsnag Dashboard
+--------------------------------------
+
+
+![GitHub Logo](/images/bugsnag/My_Sample_Errors.png)
