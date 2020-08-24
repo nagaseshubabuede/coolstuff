@@ -1,0 +1,1339 @@
+import org.apache.commons.lang3.StringUtils;
+import com.example.springboottesting.validations.ValidationErrors;
+import com.example.springboottesting.model.Customer;
+
+global ValidationErrors errors;
+
+rule "Customer_Request_Payload_firstName"
+    salience 100
+    no-loop
+    when
+        Customer(fName matches ".*[^A-Za-z].*")
+    then
+        errors.addError("fName", "fName should not contain special characters");
+end
+
+rule "Customer_Request_Payload_lastName"
+    salience 100
+    no-loop
+    when
+        Customer(lName matches ".*[^A-Za-z].*")
+    then
+        errors.addError("lName", "lName should not contain special characters");
+end
+
+//
+//
+//rule "twilio_conversation_sendFrom"
+//salience 100
+//no-loop
+//when
+//$twilioConvQueryParam: TwilioConvQueryParam()
+//TwilioNotificationDetails(StringUtils.isBlank(sendFrom)) from $twilioConvQueryParam.twilioNotificationDetailsList
+//then
+//errors.addError("sendFrom", "Required param sendFrom is missing");
+//end
+//
+//rule "twilio_conversation_sendTo"
+//salience 100
+//no-loop
+//when
+//$twilioConvQueryParam: TwilioConvQueryParam()
+//TwilioNotificationDetails(StringUtils.isBlank(sendTo)) from $twilioConvQueryParam.twilioNotificationDetailsList
+//then
+//errors.addError("sendTo", "Required param sendTo is missing");
+//end
+
+
+//
+//import java.time.format.DateTimeFormatter;
+//import java.time.LocalDate;
+//import java.time.LocalDateTime;
+//import java.time.ZoneOffset;
+//import java.util.ArrayList;
+//
+//
+//import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.validator.routines.EmailValidator;
+//
+//
+//
+//global ValidationErrors errors;
+//
+//global LocalDate todayDate;
+//
+//global LocalDateTime todayDateTime;
+//
+//global String userId;
+//
+//// Validation rule for transaction type
+//
+//rule "CartTransaction-transactionType"
+//  salience 100
+//  no-loop
+//  when
+//
+//	CartTransaction(!TransactionTypeEnum.ACCESSORYSALE.equals(transactionType) &&
+//		!TransactionTypeEnum.ADDALINE.equals(transactionType) &&
+//	    !TransactionTypeEnum.BILLPAY.equals(transactionType) &&
+//	    !TransactionTypeEnum.BRIDGEPAY.equals(transactionType) &&
+//	    !TransactionTypeEnum.CTNCHANGE.equals(transactionType) &&
+//	    !TransactionTypeEnum.DEVICESWAP.equals(transactionType) &&
+//	    !TransactionTypeEnum.NEWACTIVATION.equals(transactionType) &&
+//	    !TransactionTypeEnum.PLANCHANGE.equals(transactionType) &&
+//	    !TransactionTypeEnum.QUICKPAY.equals(transactionType) &&
+//	    !TransactionTypeEnum.RETURN.equals(transactionType) &&
+//	    !TransactionTypeEnum.RETURNBILLPAY.equals(transactionType) &&
+//	    !TransactionTypeEnum.EXCHANGE.equals(transactionType) &&
+//	    !TransactionTypeEnum.SIMSWAP.equals(transactionType) &&
+//	    !TransactionTypeEnum.UPGRADE.equals(transactionType) &&
+//	    !TransactionTypeEnum.FEATUREADD.equals(transactionType) &&
+//	    !TransactionTypeEnum.FEATUREREMOVE.equals(transactionType) &&
+//	    !TransactionTypeEnum.CTNMOVE.equals(transactionType) &&
+//	    !TransactionTypeEnum.ACCOUNTMERGE.equals(transactionType) &&
+//	    !TransactionTypeEnum.TRADEUP.equals(transactionType) &&
+//	    !TransactionTypeEnum.LEASEINITIALPAYMENT.equals(transactionType) &&
+//	    !TransactionTypeEnum.STANDALONEPORT.equals(transactionType));
+//
+//  then
+//    errors.addError("transactionType", "Transaction must have a valid transactionType");
+//end
+//
+////Validation  for Transaction Type = CTNMOVE
+//rule "CartTransaction-CTNMOVE-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.CTNMOVE.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "CTNMOVE Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-CTNMOVE-customerId"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.CTNMOVE.equals(transactionType) && (StringUtils.isBlank(targetBan) && StringUtils.isBlank(customerId)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "CTNMOVE Transaction must be associated by TargetBan/CustomerId.");
+//end
+//
+//rule "CartTransaction-CTNMOVE-customerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.CTNMOVE.equals(transactionType) && (StringUtils.isBlank(customerBan)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "CTNMOVE Transaction must be associated by CustomerBan.");
+//end
+//
+//// Validation Rules for Transaction Type = BILLPAY
+//
+//rule "CartTransaction-BillPay-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.BILLPAY.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "BillPay Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-BillPay-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.BILLPAY.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "BILLPAY Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-BillPay-Items"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.BILLPAY.equals(transactionType) && (items != null && items.size() > 0));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "BillPay Transaction must not contain any items.");
+//end
+//
+//rule "CartTransaction-BillPay.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.BILLPAY.equals(transactionType) && (lineDetails.ctn == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//// Validation Rules for Transaction Type = QUICKPAY
+//
+//rule "CartTransaction-QuickPay-Items"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.QUICKPAY.equals(transactionType) && (items != null && items.size() > 0));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "QuickPay Transaction must not contain any items.");
+//end
+//
+//rule "CartTransaction-QuickPay-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.QUICKPAY.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "QuickPay Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-QuickPay-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.QUICKPAY.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "QUICKPAY Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-QuickPay.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.QUICKPAY.equals(transactionType) && (lineDetails.ctn == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//// Validation Rules for Transaction Type = NEWACTIVATION
+//
+//rule "CartTransaction-NewActivation"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType));
+//	ArrayList(size != 3) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.DEVICE, TypeEnum.SIM, TypeEnum.PLAN)) from $cartTransaction.items);
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "NEWACTIVATION Transaction must have Device, SIM and PLAN items.");
+//end
+//
+//rule "CartTransaction-NewActivation-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (StringUtils.isNotEmpty(customerFirstName) || StringUtils.isNotEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "NEWACTIVATION Transaction must not be associated with Customer Name.");
+//end
+//
+//
+//rule "CartTransaction-NewActivation-CustomerId"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && StringUtils.isEmpty(customerId));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "NEWACTIVATION Transaction must be associated by CustomerId.");
+//end
+//
+//
+//rule "CartTransaction-NewActivation-EffectiveDate"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(StringUtils.isEmpty(effectiveDate));
+//  then
+//    $cartTransaction.setEffectiveDate(todayDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+//end
+//
+//rule "CartTransaction-EffectiveDate2"
+//  salience 1000
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(StringUtils.isNotEmpty(effectiveDate) && effectiveDate not matches  "^[0-9]{2}/[0-9]{2}/[0-9]{4}$");
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "Effective date must be in [MM/dd/yyyy] format");
+//end
+//
+//rule "CartTransaction-NewActivation.lineDetails.marketZip"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (lineDetails.isPorting() == false && StringUtils.isEmpty(lineDetails.marketZip)));
+//    then
+//        errors.addError("lineDetails", "NEWACTIVATION Transaction must have lineDetails.marketZip");
+//
+//end
+//
+//rule "CartTransaction-NewActivation.lineDetails.RateCenter"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter == null)));
+//    then
+//        errors.addError("lineDetails", "NEWACTIVATION Transaction must have lineDetails.RateCenter");
+//
+//end
+//
+//
+//
+//rule "CartTransaction-NewActivation.lineDetails.RateCenter.submarket"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter != null && lineDetails.RateCenter.submarket == null)));
+//    then
+//        errors.addError("lineDetails", "NEWACTIVATION Transaction must have lineDetails.RateCenter.submarket");
+//
+//end
+//
+//
+//
+//rule "CartTransaction-NewActivation.lineDetails.RateCenter.rateCenter"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter != null && lineDetails.RateCenter.rateCenter == null)));
+//    then
+//        errors.addError("lineDetails", "NEWACTIVATION Transaction must have lineDetails.RateCenter.rateCenter");
+//
+//end
+//
+//
+//
+//rule "CartTransaction-NewActivation.lineDetails.RateCenter.billingMarket"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter != null && lineDetails.RateCenter.billingMarket == null)));
+//    then
+//        errors.addError("lineDetails", "NEWACTIVATION Transaction must have lineDetails.RateCenter.billingMarket");
+//
+//end
+//
+//
+//rule "CartTransaction-NewActivation.lineDetails.porting"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.NEWACTIVATION.equals(transactionType) && (lineDetails == null || (lineDetails.isPorting() == true && lineDetails.portingDetails == null)));
+//    then
+//        errors.addError("lineDetails", "NEWACTIVATION Portin Transaction must have lineDetails.porting and lineDetails.portingDetails");
+//
+//end
+//
+//// Validation Rules for ITEMS
+//
+//rule "CartTransaction-Device"
+//  salience 90
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction();
+//    $item : Item() from $cartTransaction.items;
+//    ItemAttributes(TypeEnum.DEVICE.equals(type) && (StringUtils.isNotEmpty(iccid) || StringUtils.isEmpty(imei))) from $item.itemAttributes;
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "Device must have IMEI. ICCID should be blank/null.");
+//end
+//
+//rule "CartTransaction-sim"
+//  salience 90
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction();
+//    $item : Item() from $cartTransaction.items;
+//    ItemAttributes(TypeEnum.SIM.equals(type) && (StringUtils.isEmpty(iccid) || StringUtils.isNotEmpty(imei))) from $item.itemAttributes;
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "SIM must have ICCID. IMEI should be blank/null.");
+//end
+//
+//rule "CartTransaction-sim2"
+//  salience 90
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction();
+//    $item : Item() from $cartTransaction.items;
+//    ItemAttributes(TypeEnum.SIM.equals(type) && (StringUtils.isEmpty(imsi))) from $item.itemAttributes;
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "SIM must have IMSI.");
+//end
+//
+//rule "CartTransaction-plan"
+//  salience 90
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction();
+//    $item : Item() from $cartTransaction.items;
+//    ItemAttributes(TypeEnum.PLAN.equals(type) && (StringUtils.isNotEmpty(iccid) || StringUtils.isNotEmpty(imei) || StringUtils.isEmpty(itemSku))) from $item.itemAttributes;
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "Plan must have SKU. ICCID and IMEI should be blank/null.");
+//end
+//
+//rule "CartTransaction-itemAttributes.imei"
+//    salience 10
+//    no-loop
+//    when
+//        $cartTransaction: CartTransaction();
+//        $item : Item() from $cartTransaction.items;
+//        ItemAttributes(StringUtils.isNotEmpty(imei) && imei not matches "^[0-9]{15}$") from $item.itemAttributes;
+//    then
+//        errors.addError("imei", "IMEI must be 15 digits");
+//end
+//
+//rule "CartTransaction-itemAttributes.iccid"
+//    salience 10
+//    no-loop
+//    when
+//        $cartTransaction: CartTransaction();
+//        $item : Item() from $cartTransaction.items;
+//        ItemAttributes(StringUtils.isNotEmpty(iccid) && iccid not matches "^[0-9]{20}$") from $item.itemAttributes;
+//    then
+//        errors.addError("iccid", "ICCID must be 20 digits");
+//end
+//
+//rule "CartTransaction-itemAttributes.itemPrice"
+//    salience 10
+//    no-loop
+//    when
+//        $cartTransaction: CartTransaction();
+//        $item : Item() from $cartTransaction.items;
+//        ItemAttributes(itemPrice != null && itemPrice < 0.00) from $item.itemAttributes;
+//    then
+//        errors.addError("itemPrice", "attribute must be postive amount");
+//end
+//
+//// Validation Rules for LineDetails
+//
+//rule "CartTransaction-lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null && StringUtils.isNotEmpty(lineDetails.ctn) && lineDetails.ctn not matches "^[1-9]{1}[0-9]{9}$");
+//    then
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//rule "CartTransaction-lineDetails.byod"
+//    salience 10
+//    no-loop
+//    when
+//        $cartTransaction : CartTransaction(lineDetails != null && lineDetails.isByod() == null);
+//    then
+//        $cartTransaction.getLineDetails().setByod(false);
+//end
+//
+//rule "CartTransaction-lineDetails.porting.false"
+//   salience 10
+//   no-loop
+//    when
+//        $cartTransaction : CartTransaction(lineDetails != null && lineDetails.isPorting() == null && lineDetails.portingDetails == null);
+//    then
+//        $cartTransaction.getLineDetails().setPorting(false);
+//end
+//
+//rule "CartTransaction-lineDetails.displayOrder"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null && lineDetails.displayOrder != null && lineDetails.displayOrder < 0);
+//    then
+//        errors.addError("lineDetails.displayOrder", "attribute must be postive integer");
+//end
+//
+//rule "CartTransaction-lineDetails.marketZip"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null && lineDetails.marketZip != null && lineDetails.marketZip.length > 50);
+//    then
+//        errors.addError("lineDetails.marketZip", "attribute more than 50 characters not allowed");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails"
+//    salience 20
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails == null);
+//    then
+//        errors.addError("lineDetails.portingDetails", "PortingDetails must be present when porting");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.portingCtn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isNotEmpty(lineDetails.portingDetails.portingCtn)
+//        			&& lineDetails.portingDetails.portingCtn not matches "^[1-9]{1}[0-9]{9}$");
+//    then
+//        errors.addError("lineDetails.portingDetails.portingCtn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//rule "CartTransaction-CartCommission"
+//    salience 100
+//    no-loop
+//    when
+//        $cart : Cart(cartCommissions != null && cartCommissions.size() > 0 );
+//        $totalCommission : Number (floatValue != 100.00)
+//        		from accumulate ( CartCommission ( $value : commissionSplitPercentage) from $cart.cartCommissions,
+//        			sum ( $value )
+//        			)
+//    then
+//        errors.addError("cartCommissions", "All Commissions must add equal to 100. Total commission in cart = " + $totalCommission.toString());
+//end
+//
+//// Validation Rules for Transaction Type = BRIDGEPAY
+//
+//rule "CartTransaction-BRIDGEPAY-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.BRIDGEPAY.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "BRIDGEPAY Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-BRIDGEPAY-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.BRIDGEPAY.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "BRIDGEPAY Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-BRIDGEPAY.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.BRIDGEPAY.equals(transactionType) && (lineDetails.ctn == null || (lineDetails.ctn == null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//
+//// Validation Rules for Transaction Type = CTNCHANGE
+//
+//rule "CartTransaction-CTNCHANGE-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.CTNCHANGE.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "CTNCHANGE Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-CTNCHANGE-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.CTNCHANGE.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "CTNCHANGE Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-CTNCHANGE.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.CTNCHANGE.equals(transactionType) && (lineDetails == null || lineDetails.ctn == null));
+//    then
+//        errors.addError("lineDetails", "CTNCHANGE Transaction must have lineDetails");
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//
+//rule "CartTransaction-CTNCHANGE.lineDetails.rateCenter"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.CTNCHANGE.equals(transactionType) && (lineDetails == null || (lineDetails.rateCenter == null )));
+//    then
+//        errors.addError("lineDetails.rateCenter", "rateCenter must be populated");
+//end
+//
+//rule "CartTransaction-CTNCHANGE.lineDetails.marketZip"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.CTNCHANGE.equals(transactionType) && StringUtils.isEmpty(lineDetails.marketZip));
+//    then
+//       errors.addError("lineDetails", "CTNCHANGE Transaction must have lineDetails.marketZip");
+//end
+//
+//rule "CartTransaction-CTNCHANGE.transactionFees"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.CTNCHANGE.equals(transactionType) && transactionFees == null);
+//    then
+//        errors.addError("transactionFees", "CTNCHANGE Transaction must have transactionFees");
+//end
+//
+//
+//// Validation Rules for Transaction Type = DEVICESWAP
+//
+//rule "CartTransaction-DEVICESWAP-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.DEVICESWAP.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "DEVICESWAP Transaction must be associated by CustomerBan.");
+//end
+//
+//
+//rule "CartTransaction-DEVICESWAP-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.DEVICESWAP.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "DEVICESWAP Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-DEVICESWAP.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.DEVICESWAP.equals(transactionType) && (lineDetails == null || lineDetails.ctn == null));
+//    then
+//        errors.addError("lineDetails", "DEVICESWAP Transaction must have lineDetails");
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//
+//// Validation Rules for Transaction Type = PLANCHANGE
+//
+//rule "CartTransaction-PLANCHANGE-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.PLANCHANGE.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "PLANCHANGE Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-PLANCHANGE-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.PLANCHANGE.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "PLANCHANGE Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-PLANCHANGE.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.PLANCHANGE.equals(transactionType) && (lineDetails == null || lineDetails.ctn == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails", "PLANCHANGE Transaction must have lineDetails with correct CTN");
+//end
+//
+//rule "CartTransaction-PLANCHANGE.effectiveDate"
+//    salience 10
+//    no-loop
+//    when
+//      	$cartTransaction: CartTransaction(TransactionTypeEnum.PLANCHANGE.equals(transactionType) && StringUtils.isEmpty(effectiveDate));
+//  	then
+//    	$cartTransaction.setEffectiveDate(todayDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+//end
+//
+//
+//rule "CartTransaction-PLANCHANGE.PLAN.Item"
+//    salience 10
+//    no-loop
+//    when
+//	    $cartTransaction: CartTransaction(TransactionTypeEnum.PLANCHANGE.equals(transactionType));
+//		ArrayList(size != 1) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.PLAN)) from $cartTransaction.items);
+//  	then
+//  	   	errors.addError($cartTransaction.getTransactionId(), "PLANCHANGE Transaction must have one item of PLAN type");
+//end
+//
+//// Validation Rules for Transaction Type = FEATUREADD
+//
+//
+//rule "CartTransaction-FEATUREADD-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.FEATUREADD.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "FEATUREADD Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-FEATUREADD.effectiveDate"
+//    salience 10
+//    no-loop
+//    when
+//      	$cartTransaction: CartTransaction(TransactionTypeEnum.FEATUREADD.equals(transactionType) && StringUtils.isEmpty(effectiveDate));
+//  	then
+//    	$cartTransaction.setEffectiveDate(todayDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+//end
+//
+//rule "CartTransaction-FEATUREADD.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.FEATUREADD.equals(transactionType) && (lineDetails == null || lineDetails.ctn == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails", "FEATUREADD Transaction must have lineDetails with correct CTN");
+//end
+//
+//// Validation Rules for Transaction Type = FEATUREREMOVE
+//
+//rule "CartTransaction-FEATUREREMOVE-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.FEATUREREMOVE.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "FEATUREREMOVE Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-FEATUREREMOVE.effectiveDate"
+//    salience 10
+//    no-loop
+//    when
+//      	$cartTransaction: CartTransaction(TransactionTypeEnum.FEATUREREMOVE.equals(transactionType) && StringUtils.isEmpty(effectiveDate));
+//  	then
+//    	$cartTransaction.setEffectiveDate(todayDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+//end
+//
+//rule "CartTransaction-FEATUREREMOVE.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.FEATUREREMOVE.equals(transactionType) && (lineDetails == null || lineDetails.ctn == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails", "FEATUREREMOVE Transaction must have lineDetails with correct CTN");
+//end
+//
+//rule "CartTransaction-FEATUREREMOVE.FEATURE.Item"
+//    salience 10
+//    no-loop
+//    when
+//	    $cartTransaction: CartTransaction(TransactionTypeEnum.FEATUREREMOVE.equals(transactionType));
+//		ArrayList(size < 1) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.FEATURE)) from $cartTransaction.items);
+//  	then
+//  	   	errors.addError($cartTransaction.getTransactionId(), "FEATUREREMOVE Transaction must have one item of FEATURE type");
+//end
+//
+//// Validation Rules for Transaction Type = RETURN
+//
+//rule "CartTransaction-RETURN-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.RETURN.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "RETURN Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-RETURN-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.RETURN.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "RETURN Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-RETURN.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        $cartTransaction: CartTransaction(TransactionTypeEnum.RETURN.equals(transactionType) && (lineDetails == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//        ArrayList(size < 1) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.ACCESSORY)) from $cartTransaction.items);
+//    then
+//        errors.addError("lineDetails", "RETURN Transaction must have lineDetails");
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//// Validation Rules for Transaction Type = SIMSWAP
+//
+//rule "CartTransaction-SIMSWAP-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.SIMSWAP.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "SIMSWAP Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-SIMSWAP-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.SIMSWAP.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "SIMSWAP Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-SIMSWAP.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.SIMSWAP.equals(transactionType) && (lineDetails == null || (lineDetails.ctn != null && not matches "^[1-9]{1}[0-9]{9}$")));
+//    then
+//        errors.addError("lineDetails", "SIMSWAP Transaction must have lineDetails");
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//
+//// Validation Rules for Transaction Type = UPGRADE
+//
+//rule "CartTransaction-UPGRADE-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "UPGRADE Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-UPGRADE-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "UPGRADE Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-UPGRADE.lineDetails.ctn"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && (lineDetails == null || lineDetails.ctn == null));
+//    then
+//        errors.addError("lineDetails", "UPGRADE Transaction must have lineDetails");
+//        errors.addError("lineDetails.ctn", "attribute must be 10 digits starting non zero digit");
+//end
+//
+//rule "CartTransaction-UPGRADE.lineDetails.byod"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && (lineDetails == null || lineDetails.isByod() == null));
+//    then
+//        errors.addError("lineDetails.byod", "byod attribute must be populated with true or false");
+//end
+//
+//rule "CartTransaction-UPGRADE.items.itemAttributes.imei"
+//    salience 10
+//    no-loop
+//
+//    when
+//    	$cartTransaction : CartTransaction()
+//    	$item : Item() from $cartTransaction.getItems()
+//        CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && ($item.itemAttributes.type.equals(TypeEnum.DEVICE) && $item.itemAttributes.imei == null ));
+//    then
+//        errors.addError("items.itemAttributes.imei", "IMEI attribute must be populated in item with Item Attribute TYPE as DEVICE");
+//end
+//
+//rule "CartTransaction-UPGRADE.items.itemAttributes.make"
+//    salience 10
+//    no-loop
+//
+//    when
+//    	$cartTransaction : CartTransaction()
+//    	$item : Item() from $cartTransaction.getItems()
+//        CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && ($item.itemAttributes.type.equals(TypeEnum.DEVICE) && $item.itemAttributes.make == null));
+//    then
+//        errors.addError("items.itemAttributes.make", "Make attribute must be populated in item with Item Attribute TYPE as DEVICE");
+//end
+//
+//rule "CartTransaction-UPGRADE.items.itemAttributes.model"
+//    salience 10
+//    no-loop
+//
+//    when
+//    	$cartTransaction : CartTransaction()
+//    	$item : Item() from $cartTransaction.getItems()
+//        CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && ($item.itemAttributes.type.equals(TypeEnum.DEVICE) && $item.itemAttributes.model == null));
+//    then
+//        errors.addError("items.itemAttributes.model", "Model attribute must be populated in item with Item Attribute TYPE as DEVICE");
+//end
+//
+//rule "CartTransaction-UPGRADE.items.itemAttributes.itemPrice"
+//    salience 10
+//    no-loop
+//
+//    when
+//    	$cartTransaction : CartTransaction()
+//    	$item : Item() from $cartTransaction.getItems()
+//        CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && ($item.itemAttributes == null || $item.itemAttributes.itemPrice == null));
+//    then
+//        errors.addError("items.itemAttributes.itemPrice", "itemPrice attribute must be populated");
+//end
+//
+//rule "CartTransaction-UPGRADE.items.itemAttributes.type"
+//  salience 100
+//  no-loop
+//  when
+//   	$cartTransaction : CartTransaction()
+//    $item : Item() from $cartTransaction.getItems()
+//	CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType) && ($item.itemAttributes.type.equals(TypeEnum.ACCESSORY) || $item.itemAttributes.type.equals(TypeEnum.FEATURE) || $item.itemAttributes.type.equals(TypeEnum.PLAN)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "UPGRADE Transaction can not have items other than Device and SIM, where DEVICE is a mandatory item and SIM is optional.");
+//end
+//
+//rule "CartTransaction-UPGRADE.items.itemAttributes.type.Device"
+//    salience 10
+//    no-loop
+//    when
+//	    $cartTransaction: CartTransaction(TransactionTypeEnum.UPGRADE.equals(transactionType));
+//		ArrayList(size != 1) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.DEVICE)) from $cartTransaction.items);
+//  	then
+//  	   	errors.addError($cartTransaction.getTransactionId(), "UPGRADE Transaction must have one Item with Item Attribute TYPE as DEVICE");
+//end
+//
+//// Validation Rules for Transaction Type = ADDALINE
+//
+//rule "CartTransaction-ADDALINE-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "ADDALINE Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-ADDALINE-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "ADDALINE Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-ADDALINE"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType));
+//	ArrayList(size != 3) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.DEVICE, TypeEnum.SIM, TypeEnum.PLAN)) from $cartTransaction.items);
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "ADDALINE Transaction must have Device, SIM and PLAN items.");
+//end
+//
+//rule "CartTransaction-ADDALINE.lineDetails.marketZip"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (lineDetails.isPorting() == false && StringUtils.isEmpty(lineDetails.marketZip)));
+//    then
+//        errors.addError("lineDetails", "ADDALINE Transaction must have lineDetails.marketZip");
+//
+//end
+//
+//
+//rule "CartTransaction-ADDALINE.lineDetails.RateCenter"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter == null)));
+//    then
+//        errors.addError("lineDetails", "ADDALINE Transaction must have lineDetails.RateCenter");
+//
+//end
+//
+//
+//
+//rule "CartTransaction-ADDALINE.lineDetails.RateCenter.submarket"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter != null && lineDetails.RateCenter.submarket == null)));
+//    then
+//        errors.addError("lineDetails", "ADDALINE Transaction must have lineDetails.RateCenter.submarket");
+//
+//end
+//
+//
+//
+//rule "CartTransaction-ADDALINE.lineDetails.RateCenter.rateCenter"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter != null && lineDetails.RateCenter.rateCenter == null)));
+//    then
+//        errors.addError("lineDetails", "ADDALINE Transaction must have lineDetails.RateCenter.rateCenter");
+//
+//end
+//
+//rule "CartTransaction-ADDALINE.lineDetails.RateCenter.billingMarket"
+//    salience 100
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (lineDetails.isPorting() == false && (lineDetails.RateCenter != null && lineDetails.RateCenter.billingMarket == null)));
+//    then
+//        errors.addError("lineDetails", "ADDALINE Transaction must have lineDetails.RateCenter.billingMarket");
+//
+//end
+//
+//rule "CartTransaction-ADDALINE.lineDetails.portingDetails"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.ADDALINE.equals(transactionType) && (lineDetails == null || (lineDetails.isPorting() == true && lineDetails.portingDetails == null)));
+//    then
+//        errors.addError("lineDetails", "ADDALINE Portin Transaction must have lineDetails.portingDetails");
+//
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.portingCarrierAccountNumber"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.portingCarrierAccountNumber));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.portingCarrierAccountNumber", "portingDetails must have portingCarrierAccountNumber");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.portingCarrierAccountPasscode"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.portingCarrierAccountPasscode));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.portingCarrierAccountPasscode",  "portingDetails must have portingCarrierAccountPasscode");
+//end
+//rule "CartTransaction-lineDetails.portingDetails.portingCarrierBillingZipCode"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.portingCarrierBillingZipCode));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.portingCarrierBillingZipCode", "portingDetails must have portingCarrierBillingZipCode");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.portNetworkServiceProviderId"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.portNetworkServiceProviderId));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.portNetworkServiceProviderId", "portingDetails must have portNetworkServiceProviderId");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.portServiceProviderId"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.portServiceProviderId));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.portServiceProviderId", "portingDetails must have portServiceProviderId");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.portServiceProviderName"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.portServiceProviderName));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.portServiceProviderName", "portingDetails must have portServiceProviderName");
+//end
+//
+//rule "CartTransaction-lineDetails.portingDetails.locationRoutingNumber"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(lineDetails != null
+//        			&& lineDetails.isPorting() !=null
+//                    && lineDetails.isPorting()
+//        			&& lineDetails.portingDetails != null
+//        			&& StringUtils.isEmpty(lineDetails.portingDetails.locationRoutingNumber));
+//
+//    then
+//        errors.addError("lineDetails.portingDetails.locationRoutingNumber", "portingDetails must have locationRoutingNumber");
+//end
+//
+//rule "CartTransaction-STANDALONEPORT.lineDetails.portingDetails"
+//    salience 10
+//    no-loop
+//    when
+//        CartTransaction(TransactionTypeEnum.STANDALONEPORT.equals(transactionType) && (lineDetails == null || (lineDetails.isPorting() == true && lineDetails.portingDetails == null)));
+//    then
+//        errors.addError("lineDetails", "STANDALONEPORT Portin Transaction must have lineDetails.portingDetails");
+//end
+//
+//// Validation Rules for Transaction Type = ACCESSORYSALE
+//
+//rule "CartTransaction-ACCESSORYSALE-CustomerBan"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.ACCESSORYSALE.equals(transactionType) && StringUtils.isEmpty(customerBan));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "ACCESSORYSALE Transaction must be associated by CustomerBan.");
+//end
+//
+//rule "CartTransaction-ACCESSORYSALE-CustomerName"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction : CartTransaction(TransactionTypeEnum.ACCESSORYSALE.equals(transactionType) && (StringUtils.isEmpty(customerFirstName) || StringUtils.isEmpty(customerLastName)));
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "ACCESSORYSALE Transaction must be associated by Customer First and Last name.");
+//end
+//
+//rule "CartTransaction-ACCESSORYSALE"
+//  salience 100
+//  no-loop
+//  when
+//    $cartTransaction: CartTransaction(TransactionTypeEnum.ACCESSORYSALE.equals(transactionType));
+//	ArrayList(size == 0) from collect (Item(itemAttributes.type != null && itemAttributes.type in (TypeEnum.ACCESSORY)) from $cartTransaction.items);
+//  then
+//    errors.addError($cartTransaction.getTransactionId(), "ACCESSORYSALE Transaction must have ACCESSORY items.");
+//end
+//
+//// Validation rules for payments for QuickPay , BillPay and BridgePay
+//
+//
+//rule "CartTransaction-payments"
+//    salience 10
+//    no-loop
+//    when
+//        $cartTransaction : CartTransaction((TransactionTypeEnum.QUICKPAY.equals(transactionType)||TransactionTypeEnum.BILLPAY.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)) && (payments==null ||payments.isEmpty()));
+//    then
+//        errors.addError("payments", "QuickPay, BillPay and BridgePay Transaction must have payments");
+//end
+//
+//rule "CartTransaction-payments.paymentAmount"
+//    salience 10
+//    no-loop
+//    when
+//    	$cartTransaction: CartTransaction();
+//    	$payment : Payment() from $cartTransaction.getPayments();
+//        CartTransaction((TransactionTypeEnum.QUICKPAY.equals(transactionType)||TransactionTypeEnum.BILLPAY.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)) && ($payment == null || ($payment.paymentAmount == null) || $payment.paymentAmount < 0.00 ));
+//    then
+//        errors.addError("payments.paymentAmount", "QuickPay, BillPay and BridgePay Transaction must have payments.paymentAmount which should be positive amount");
+//end
+//
+//rule "CartTransaction-payments.paymentType"
+//    salience 10
+//    no-loop
+//    when
+//      	$cartTransaction: CartTransaction();
+//    	$payment : Payment() from $cartTransaction.getPayments();
+//  		CartTransaction((TransactionTypeEnum.QUICKPAY.equals(transactionType)||TransactionTypeEnum.BILLPAY.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)) && ($payment == null || ($payment.paymentType == null)));
+//    then
+//        errors.addError("payments.paymentType", "QuickPay, BillPay and BridgePay Transaction must have payments.paymentType");
+//end
+//// Validation rules for payments and transactionFees for NewActivation ,AddaLine QuickPay , BillPay , BridgePay and Upgrade
+//
+//rule "CartTransaction-transactionFees"
+//    salience 10
+//    no-loop
+//    when
+//   		$cartTransaction : CartTransaction((TransactionTypeEnum.NEWACTIVATION.equals(transactionType)||TransactionTypeEnum.ADDALINE.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)||TransactionTypeEnum.UPGRADE.equals(transactionType)) && (transactionFees==null ||transactionFees.isEmpty()));
+//    then
+//        errors.addError("transactionFees", "NewActivation, AddaLine, BridgePay and Upgrade Transaction must have transactionFees");
+//end
+//
+//rule "CartTransaction-transactionFees.transactionFeeAmount"
+//    salience 10
+//    no-loop
+//    when
+//    	$cartTransaction: CartTransaction();
+//    	$transactionFee : TransactionFee() from $cartTransaction.getTransactionFees();
+//   		CartTransaction((TransactionTypeEnum.NEWACTIVATION.equals(transactionType)||TransactionTypeEnum.ADDALINE.equals(transactionType)||TransactionTypeEnum.UPGRADE.equals(transactionType)||TransactionTypeEnum.QUICKPAY.equals(transactionType)||TransactionTypeEnum.BILLPAY.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)) && ($transactionFee == null || ($transactionFee.transactionFeeAmount == null) || $transactionFee.transactionFeeAmount  < 0.00));
+//    then
+//        errors.addError("transactionFees.transactionFeeAmount", "NewActivation, AddaLine, Upgrade, QuickPay, BillPay and BridgePay Transaction must have transactionFees.transactionFeeAmount which should be positive amount");
+//end
+//
+//rule "CartTransaction-transactionFees.transactionFeeLabel"
+//    salience 10
+//    no-loop
+//    when
+//  		$cartTransaction: CartTransaction();
+//    	$transactionFee : TransactionFee() from $cartTransaction.getTransactionFees();
+//   		CartTransaction((TransactionTypeEnum.NEWACTIVATION.equals(transactionType)||TransactionTypeEnum.ADDALINE.equals(transactionType)||TransactionTypeEnum.QUICKPAY.equals(transactionType)||TransactionTypeEnum.BILLPAY.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)) && ($transactionFee == null || ($transactionFee.transactionFeeLabel == null)));
+//    then
+//        errors.addError("transactionFees.transactionFeeLabel", "NewActivation ,AddaLine, QuickPay, BillPay and BridgePay Transaction must have transactionFees.transactionFeeLabel");
+//end
+//
+//rule "CartTransaction-transactionFees.transactionFeeSku"
+//    salience 10
+//    no-loop
+//    when
+//      	$cartTransaction: CartTransaction();
+//    	$transactionFee : TransactionFee() from $cartTransaction.getTransactionFees();
+//   		CartTransaction((TransactionTypeEnum.NEWACTIVATION.equals(transactionType)||TransactionTypeEnum.ADDALINE.equals(transactionType)||TransactionTypeEnum.QUICKPAY.equals(transactionType)||TransactionTypeEnum.BILLPAY.equals(transactionType)||TransactionTypeEnum.BRIDGEPAY.equals(transactionType)) && ($transactionFee == null || ($transactionFee.transactionFeeSku == null)));
+//    then
+//        errors.addError("transactionFees.transactionFeeSku", "NewActivation ,AddaLine, QuickPay, BillPay and BridgePay Transaction must have transactionFees.transactionFeeSku");
+//end
+//
+//// validate cartId
+//rule "CartRecord-validate-cartId"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecord(StringUtils.isBlank(cartId));
+//  then
+//    errors.addError("cartId", "Required param cartId is missing");
+//end
+//
+////validate CartRecord-validateCartId
+//rule "CartRecord-validate-cartId-format"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecord(StringUtils.isNotBlank(cartId) && cartId not matches "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+//  then
+//    errors.addError("cartId", "Not a valid cartId format.");
+//end
+//
+//// validate emailAddress required
+//rule "CartRecord-validate-emailAddress-required"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecord(StringUtils.isBlank(emailAddress));
+//  then
+//    errors.addError("emailAddress", "Required emailAddress is missing");
+//end
+//
+//// validate emailAddress format
+//rule "CartRecord-validate-emailAddress"
+//	salience 100
+//	no-loop
+//	when
+//		CartRecord(StringUtils.isNotBlank(emailAddress) &&
+//		  EmailValidator.getInstance().isValid(emailAddress)==false);
+//	then
+//	  	errors.addError("emailAddress", "Not a valid email address.");
+//end
+//
+////Validate ban
+//rule "CartRecord-validate-ban"
+//  salience 100
+//  no-loop
+//  when
+//    $pathParam : CartRecord(StringUtils.isNotBlank(ban) && ban not matches "^[0-9]{9}$");
+//  then
+//    errors.addError("ban", "Not a valid BAN format. BAN must be 9 digits.");
+//end
+//
+//
+////Validate ctn
+//rule "CartRecord-validate-ctn"
+//  salience 100
+//  no-loop
+//  when
+//    $pathParam : CartRecord(StringUtils.isNotBlank(ctn) && ctn not matches "^[1-9]{1}[0-9]{9}$");
+//  then
+//    errors.addError("ctn", "Not a valid CTN format.  CTN must be 10 digits starting non zero digit.");
+//end
+//
+//// validate queryType
+//rule "QueryParam-CartRecord-validate-queryType"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecordQueryParam(StringUtils.isBlank(key));
+//  then
+//    errors.addError("queryType", "Required queryType is missing");
+//end
+//
+//// validate queryData
+//rule "QueryParam-CartRecord-validate-queryData"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecordQueryParam(StringUtils.isBlank(value));
+//  then
+//    errors.addError("queryData", "Required queryData is missing");
+//end
+//
+//// validate queryData for ban
+//rule "QueryParam-CartRecord-validate-queryData-ban"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecordQueryParam(
+//    StringUtils.isNotBlank(key) &&
+//    StringUtils.equalsIgnoreCase(key, "ban") &&
+//    value not matches "^[0-9]{9}$"
+//    );
+//  then
+//    errors.addError("queryData", "Not a valid BAN format. BAN must be 9 digits.");
+//end
+//
+//
+//// validate queryData for ctn
+//rule "QueryParam-CartRecord-validate-queryData-ctn"
+//  salience 100
+//  no-loop
+//  when
+//    CartRecordQueryParam(
+//    StringUtils.isNotBlank(key) &&
+//    StringUtils.equalsIgnoreCase(key, "ctn") &&
+//    value not matches "^[1-9]{1}[0-9]{9}$"
+//    );
+//  then
+//    errors.addError("queryData", "Not a valid CTN format.  CTN must be 10 digits starting non zero digit.");
+//end
+//
+//// validate queryData for emailAddress
+//rule "QueryParam-CartRecord-validate-queryData-emailAddress"
+//	salience 100
+//	no-loop
+//	when
+//		CartRecordQueryParam(
+//		StringUtils.isNotBlank(key) &&
+//		StringUtils.equalsIgnoreCase(key, "email") &&
+//		EmailValidator.getInstance().isValid(value)==false
+//		);
+//	then
+//	  errors.addError("queryData", "Not a valid email address.");
+//end
+//
+////validate cartId
+//rule "Validate-CartId"
+//  salience 100
+//  no-loop
+//  when
+//   String(StringUtils.isNotBlank(this) && this not matches "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+//  then
+//    errors.addError("cartId", "Not a valid cartId format.");
+//end
+//
