@@ -26,7 +26,7 @@ The simplest way to start capturing exceptions is to create a new class which ex
 public class BugsnagConfig {
     @Bean
     public Bugsnag bugsnag() {
-        return new Bugsnag(```- "xxxxxxxxxxxxxxxxxxxxxxx"```");
+        return new Bugsnag(```diff - "xxxxxxxxxxxxxxxxxxxxxxx"```");
     }
 }
 ```
@@ -53,7 +53,7 @@ An error should appear in your dashboard after you click the continue button bel
 Next steps
 After completing the installation instructions, take a look at our documentation for additional configuration options. Find out how you can track your application's stability, add custom metadata, leave your own breadcrumbs, and more. If you need any help, contact us.
 
-```
+```diff
 - text in red
 + text in green
 ! text in orange
