@@ -3,7 +3,7 @@ Bugsnag Installation
 ====================
 
 
-Add Bugsnag as a dependency in your pom.xml:
+Add Bugsnag as a dependency in your `pom.xml`:
 ```
 <dependency>
   <groupId>com.bugsnag</groupId>
@@ -14,7 +14,10 @@ Add Bugsnag as a dependency in your pom.xml:
 
 Install the library:
 
+```
 mvn install
+```
+
 The simplest way to start capturing exceptions is to create a new class which exposes Bugsnag as a Spring Bean, and imports the BugsnagSpringConfiguration class:
 
 @Configuration
