@@ -4,5 +4,5 @@ Get your hands dirty
 
 Page | Covers
 ------------------------------ | -------------
-1. Spring Boot with Cassandra.md | This file convers 1. Spring Boot installation
-Content in the first column | Content in the second column
+Spring Boot with Cassandra.md | This file convers Spring Boot Project Setup, Cassandra Installation, Spring Boot and Cassandra Integration
+Drools.md | Request Payload Validations
