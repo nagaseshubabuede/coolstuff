@@ -1,5 +1,6 @@
 package com.example.springboottesting.controller;
 
+import com.bugsnag.Bugsnag;
 import com.example.springboottesting.helper.ErrorResponseHelper;
 import com.example.springboottesting.model.Customer;
 import com.example.springboottesting.helper.CustomerHelper;
@@ -29,18 +30,22 @@ public class CustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
 
     @Autowired
-    CustomerHelper customerHelper;
+    private CustomerHelper customerHelper;
 
     @Autowired
-    ErrorResponseHelper errorResponseHelper;
+    private ErrorResponseHelper errorResponseHelper;
 
     @Autowired
-    ServiceValidator serviceValidator;
+    private ServiceValidator serviceValidator;
+
+    @Autowired
+    private Bugsnag bugsnag;
 
     @GetMapping(value = "/customers")
     public ResponseEntity findAllCustomers(HttpServletRequest httpServletRequest) {
         String strMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try {
+            bugsnag.notify(new RuntimeException("Test error"));
             return customerHelper.findAllCustomers();
         } catch (Exception e) {
             LOGGER.error(String.format("Error while performing %s", strMethodName), e);

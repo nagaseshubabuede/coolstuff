@@ -21,13 +21,13 @@ public class CustomerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerHelper.class);
 
     @Autowired
-    CustomerDao customerDao;
+    private CustomerDao customerDao;
 
     @Autowired
-    CustomerModelBuilder customerModelBuilder;
+    private CustomerModelBuilder customerModelBuilder;
 
     @Autowired
-    CustomerDaoBuilder customerDaoBuilder;
+    private CustomerDaoBuilder customerDaoBuilder;
 
     public ResponseEntity findAllCustomers() {
         String strMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
