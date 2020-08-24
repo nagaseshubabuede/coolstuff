@@ -2,11 +2,9 @@
 Bugsnag Installation
 ====================
 
-
-Add Bugsnag as a dependency in your 
-```diff 
-- pom.xml
-```:
+```diff
+Add Bugsnag as a dependency in your  - pom.xml:
+```
 
 ```
 <dependency>
