@@ -28,7 +28,7 @@ The simplest way to start capturing exceptions is to create a new class which ex
 public class BugsnagConfig {
     @Bean
     public Bugsnag bugsnag() {
-        return new Bugsnag(```diff - "xxxxxxxxxxxxxxxxxxxxxxx"```");
+        return new Bugsnag("xxxxxxxxxxxxxxxxxxxxxxx");
     }
 }
 ```
@@ -53,5 +53,5 @@ Bugsnag bugsnag;
 
 bugsnag.notify(new RuntimeException("Test error"));
 ```
-An error should appear in your dashboard after you click the continue button below.
 
+An error should appear in your dashboard after testing this stuff
