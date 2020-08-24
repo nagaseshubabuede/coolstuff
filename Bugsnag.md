@@ -3,7 +3,11 @@ Bugsnag Installation
 ====================
 
 
-Add Bugsnag as a dependency in your ```diff - pom.xml```:
+Add Bugsnag as a dependency in your 
+```diff 
+- pom.xml
+```:
+
 ```
 <dependency>
   <groupId>com.bugsnag</groupId>
