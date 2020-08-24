@@ -1,7 +1,7 @@
 # coolstuff
 Get your hands dirty
 
-![GitHub Logo](/images/java_image.png)
+![GitHub Logo](/images/java_images.png)
 
 
 Page | Covers
