@@ -5,6 +5,7 @@ import com.example.springboottesting.helper.ErrorResponseHelper;
 import com.example.springboottesting.model.Customer;
 import com.example.springboottesting.helper.CustomerHelper;
 import com.example.springboottesting.model.ErrorAttributes;
+import com.example.springboottesting.model.SuccessResponse;
 import com.example.springboottesting.validations.ServiceValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,18 @@ public class CustomerController {
         String strMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
         try {
             return customerHelper.deleteCustomer(id);
+        } catch (Exception e) {
+            LOGGER.error(String.format("Error while performing %s", strMethodName), e);
+            throw e;
+        }
+    }
+
+    @GetMapping(value = "/bugsnag")
+    public ResponseEntity testBugsnag(HttpServletRequest httpServletRequest) {
+        String strMethodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+        try {
+            bugsnag.notify(new RuntimeException("Test error"));
+            return ResponseEntity.ok().body(new SuccessResponse("SUCCESS"));
         } catch (Exception e) {
             LOGGER.error(String.format("Error while performing %s", strMethodName), e);
             throw e;
