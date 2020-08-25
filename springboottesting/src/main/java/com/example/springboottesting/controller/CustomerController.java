@@ -78,7 +78,7 @@ public class CustomerController {
                     .forEach(errorAttribute -> errorAttributesList.add(errorAttribute));
 
             if (!CollectionUtils.isEmpty(errorAttributesList)) {
-                errorResponseHelper.getBadRequestErrorResponse(strMethodName, errorAttributesList);
+                return errorResponseHelper.getBadRequestErrorResponse(strMethodName, errorAttributesList);
             }
 
 
