@@ -1,1 +1,63 @@
 
+![GitHub Logo](/images/postgres/spring_boot_postgres.jpeg)
+
+Get Spring Boot Project Using Spring Intializer 
+===============================================
+Spring Initializer is the coolest way to develop spring project on fly by simply using below URI :
+
+```
+https://start.spring.io/
+```
+
+Integrating Spring Boot with Postgres
+======================================
+
+Dependencies Needed for this are 
+--------------------------------
+
+```
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-cassandra</artifactId>
+            <version>2.0.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        
+ ```       
+
+
+Installing Cassandra on Mac OS X
+================================
+
+
+Install Homebrew 
+----------------
+Homebrew is a great little package manager for OS X. If you haven't already, installing it is pretty easy:
+```
+ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+```
+
+
+```
+Install PostgresSql
+-----------------
+```brew install postgresql```
+
+
+Connect to Database
+--------------------
+
+``` 
+sudo -u postgres psql postgres
+
+```
+
+
+
+
